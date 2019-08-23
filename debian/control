@@ -1,0 +1,27 @@
+Source: dnstap-sensor
+Section: net
+Priority: optional
+Maintainer: Farsight Security <software@farsightsecurity.com>
+Build-Depends: debhelper (>> 9),
+               dh-golang,
+               dh-systemd,
+               golang-go,
+	       golang-github-farsightsec-go-config-dev,
+	       golang-github-farsightsec-go-nmsg-base-dev,
+	       golang-github-farsightsec-go-nmsg-dev,
+	       golang-github-farsightsec-sielink-client-dev,
+	       golang-github-farsightsec-sielink-dev,
+	       golang-github-dnstap-go-dnstap-dev,
+	       golang-github-xeipuuv-gojsonschema-dev,
+	       golang-gopkg-yaml.v2-dev,
+	       golang-goprotobuf-dev
+Standards-Version: 3.9.8
+Homepage: https://www.farsightsecurity.com
+XS-Go-Import-Path: github.com/farsightsec/dnstap-sensor
+
+Package: dnstap-sensor
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Dnstap passive DNS sensor
+ SIE sensor which reads Dnstap messages from a Frame Streams socket and
+ packages them for delivery to one or more SIE submission servers.

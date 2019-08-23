@@ -1,0 +1,206 @@
+.TH dnstap-sensor 8
+
+.SH NAME
+
+dnstap-sensor \- upload dnstap data to Farsight Security SIE
+
+.SH SYNOPSIS
+
+.B dnstap-sensor --apikey (\fIkey\fB|\fIkeyfile-path\fB)
+.br
+.B "	--channel \fInumber\fB --input \fIsocket-path\fB [--trace]"
+.br
+.B "	[--stats_interval \fIduration\fB] [--heartbeat \fIduration\fB]"
+.br
+.B "	[--retry \fIduration\fB] [--flush \fIduration\fB]"
+.br
+.B "	\fIserver-uri\fB [ \fIserver-uri ...\fB ]"
+
+.B dnstap-sensor --config \fI/path/to/conffile\fB
+
+.SH DESCRIPTION
+
+.B dnstap-sensor
+collects Dnstap data from a socket, encapsulates
+it in NMSG messages, and uploads the data over one or more persistent
+HTTP connections for distribution on the Farsight SIE.
+
+Only Dnstap messages of type RESOLVER_RESPONSE are uploaded, so that
+.B dnstap-sensor
+can coexist with other Dnstap applications.
+
+.SH OPTIONS
+
+.TP
+.B --apikey (\fIkey\fB|\fIkeyfile-path\fB)
+Specify the API key for authentication to the server. The key
+may be provided in the argument, or a path to a file containing the key
+to keep the key out of
+.I ps
+output.
+
+The API key must be provided either through the command line
+option or the optional configuration file.
+
+.TP
+.B --input \fIsocket-path\fB
+Collect dnstap input from the UNIX domain socket at \fIsocket-path\fR.
+\fBdnstap-sensor\fR will create this socket and accept connections
+from the DNS server. Note that this requires \fBdnstap-sensor\fR be
+invoked as the same user as the DNS server.
+
+An input must be specified on the command line or in the optional
+configuration file.
+
+.TP
+.B --channel \fIchannel-number\fB
+Address the Dnstap data to SIE channel \fIchannel-number\fR.
+
+The channel number must be specified on the command line or in the
+optional config file.
+
+.TP
+.B --flush \fIduration\fB
+Buffer the Dnstap data for at most \fIduration\fR. The duration
+argument format is a number followed by a unit, e.g. "300ms",
+"1.5s". The default value is "500ms".
+
+.TP
+.B --heartbeat \fIduration\fB
+Send heartbeat messages every \fIduration\fR. The HTTP/websocket
+protocol used by \fBdnstap-sensor\fR sends periodic heartbeats
+to keep the connection alive and detect node and network failures.
+The duration argument specifies how frequently to send these
+messages. The default value is "30s".
+
+.TP
+.B --retry \fIduration\fB
+Retry a failed connection after \fIduration\fR. The default value is "30s".
+
+.TP
+.B --stats_interval \fIduration\fB
+Log statistics every \fIduration\fR. The default value is "15m". A value
+of "0" turns off statistics logging.
+
+.TP
+.B --trace
+Output additional logging to standard error for debugging.
+
+.TP
+.B --config \fIfile\fB
+Load configuration from \fIfile\fR.
+See section \fBCONFIGURATION FILE\fR for details.
+
+.SH SERVER URI
+
+The \fIserver-uri\fR arguments to \fBdnstap-sensor\fR must have
+a web sockets or secure websockets (\fBws://\fR or \fBwss://\fR)
+scheme. The URI path may be left blank, or \fBdnstap-sensor\fR may
+associate an alternate name for its session with a path of
+\fB/session/\fIsession-name\fR. The default \fIsession-name\fR
+is "dnstap-sensor-upload".
+
+.SH CONFIGURATION FILE
+
+.B dnstap-sensor
+may load configuration from a file specified by the
+.B --config
+option. This file is in YAML format, and supports the
+following top-level keys:
+
+.TP
+.B api_key
+Corresponds to the
+.B --apikey
+command line option.
+
+.TP
+.B dnstap_input
+Corresponds to the
+.B --input
+command line option.
+
+.TP
+.B channel
+Corresponds to the
+.B --channel
+command line option.
+
+.TP
+.B flush
+Corresponds to the
+.B --flush
+command line option.
+
+.TP
+.B heartbeat
+Corresponds to the
+.B --heartbeat
+command line option.
+
+.TP
+.B retry
+Corresponds to the
+.B --retry
+command line option.
+
+.TP
+.B stats_interval
+Corresponds to the
+.B --stats_interval
+command line option.
+
+.TP
+.B servers
+A YAML-format list of one or more \fIserver-uri\fRs.
+
+.TP
+.B tls
+Client and root CA certificate configuration. Client certificates
+are given under the \fBcertificates\fR key as a list of dictionaries
+with keys \fBcertFile\fR and \fBkeyFile\fR. Root CAs are expressed
+as a list of PEM files under the key \fBrootCAFiles\fR.
+
+If no root CAs are configured, the system default authorized root
+CAs are used.
+
+.P
+Values specified with command line options override any corresponding
+values loaded from the configuration file.
+
+.SH EXAMPLES
+
+Read from unbound, publish to channel 203, using command line options:
+
+.nf
+	% dnstap-sensor --channel 203 --input /var/unbound/dnstap.sock \\
+		--apikey 2415cd1c-77ae-4538-9dd6-3ba2b8f8ea0a \\
+		wss://submit.sie-network.net/
+.fi
+
+Same as above, using config file, apikey file:
+
+.nf
+	% cat /etc/dnstap-sensor/apikey
+	2415cd1c-77ae-4538-9dd6-3ba2b8f8ea0a
+
+	% cat /etc/dnstap-sensor/dnstap-sensor.conf
+	api_key: /etc/dnstap-sensor/apikey
+	channel: 203
+	dnstap_input: /var/unbound/dnstap.sock
+	servers:
+	  - wss://submit.sie-network.net/
+
+	% dnstap-sensor -config /etc/dnstap-sensor/dnstap-sensor.conf
+.fi
+
+TLS configuration in config file:
+
+.nf
+	tls:
+	    certificates:
+	        - certFile: /etc/dnstap-sensor/client.cert.pem
+	          keyFile: /etc/dnstap-sensor/client.key.pem
+	    rootCAFiles:
+	        - /etc/dnstap-sensor/server.CA.pem
+.fi

@@ -1,0 +1,34 @@
+[Unit]
+Description=Dnstap sensor
+Requires=network.target
+After=network.target
+
+[Service]
+#
+# User and Group need to match the user and group the instrumented
+# DNS server is running as. Change these if needed with:
+#
+#	systemctl edit dnstap-sensor
+#
+# and providing:
+#
+#	[Service]
+#	User=<desired-user>
+#	Group=<desired-group>
+#
+User=bind
+Group=bind
+#
+# Other parameters may be edited using the defaults file.
+#
+EnvironmentFile=/etc/default/dnstap-sensor
+ExecStart=/usr/sbin/dnstap-sensor \
+	-apikey "$DNSTAP_SENSOR_APIKEY" \
+	-channel "$DNSTAP_SENSOR_CHANNEL" \
+	-input "$DNSTAP_SENSOR_INPUT" \
+	$DNSTAP_SENSOR_ARGS $DNSTAP_SENSOR_SERVERS
+Type=simple
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+# TODO: maybe this is already available to this makefile?
+TMP_BUILD_ARCH := $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+
+%:
+	dh $@ --buildsystem=golang --with=golang,systemd
+
+override_dh_auto_test:
+	# copy test data
+	mkdir -p obj-$(TMP_BUILD_ARCH)/src/github.com/farsightsec/dnstap-sensor/t/config
+	cp -rv $(CURDIR)/t/config/*.conf obj-$(TMP_BUILD_ARCH)/src/github.com/farsightsec/dnstap-sensor/t/config/
+	dh_auto_test --buildsystem=golang
+
+override_dh_auto_install:
+	dh_auto_install -- --no-source
+	mv debian/dnstap-sensor/usr/bin debian/dnstap-sensor/usr/sbin/
+
+.PHONY: override_dh_auto_install override_dh_auto_test

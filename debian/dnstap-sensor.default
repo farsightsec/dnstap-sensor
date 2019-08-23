@@ -1,0 +1,12 @@
+# api key (or path to file containing api key) (required)
+# Note: The file form is preferable to avoid having api key
+# visible in `ps` output.
+DNSTAP_SENSOR_APIKEY=""
+
+# path to dnstap socket (required)
+DNSTAP_SENSOR_INPUT=""
+
+DNSTAP_SENSOR_CHANNEL=203
+DNSTAP_SENSOR_SERVERS="wss://submit.sie-network.net/"
+
+DNSTAP_SENSOR_ARGS="-heartbeat=60s -retry=15s -flush=500ms"
