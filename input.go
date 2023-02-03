@@ -42,12 +42,19 @@ func dnstapUnmarshal(b []byte) (*nmsg_base.Dnstap, error) {
 }
 
 func (i dnstapInput) publish(ctx *Context, ch <-chan []byte) {
-	output := nmsg.TimedBufferedOutput(
-		newPayloadWriter(ctx),
-		ctx.Config.Flush.Duration,
-	)
-	output.SetMaxSize(nmsg.MaxContainerSize, 2*nmsg.MaxContainerSize)
-	output.SetCompression(true)
+	var outputs []nmsg.Output
+	if len(ctx.Config.Servers) > 0 {
+		output := nmsg.TimedBufferedOutput(
+			newPayloadWriter(ctx),
+			ctx.Config.Flush.Duration,
+		)
+		output.SetMaxSize(nmsg.MaxContainerSize, 2*nmsg.MaxContainerSize)
+		output.SetCompression(true)
+		outputs = append(outputs, output)
+	}
+	if ctx.Output != nil {
+		outputs = append(outputs, ctx.Output)
+	}
 	for b := range ch {
 		ctx.DnstapIn.Messages++
 		ctx.DnstapIn.Bytes += uint64(len(b))
@@ -85,9 +92,11 @@ func (i dnstapInput) publish(ctx *Context, ch <-chan []byte) {
 				traceMsg(ctx, "Submitting response: formatting failed")
 			}
 		}
-		err = output.Send(p)
-		if err != nil {
-			log.Fatal("Link error: ", err)
+		for _, o := range outputs {
+			err = o.Send(p)
+			if err != nil {
+				log.Fatal("Output error: ", err)
+			}
 		}
 	}
 }

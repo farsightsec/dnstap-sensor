@@ -29,6 +29,12 @@ properties:
         items:
             type: string
             format: uri
+    output:
+        type: string
+    mtu:
+        type: integer
+        mininum: 512
+        maximum: 1048576
     api_key:
         type: string
     channel:
