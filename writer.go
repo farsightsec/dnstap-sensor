@@ -52,8 +52,8 @@ func (c *payloadWriter) sendPayload(p *sielink.Payload) {
 		// case needs to be moved under a default: case.
 		select {
 		case c.writeChannel <- p:
-			c.ctx.NmsgOut.Messages++
-			c.ctx.NmsgOut.Bytes += uint64(len(p.GetData()))
+			c.ctx.NmsgUp.Messages++
+			c.ctx.NmsgUp.Bytes += uint64(len(p.GetData()))
 			return
 		case discard := <-c.writeChannel:
 			p.RecordDiscard(discard)

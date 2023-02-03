@@ -9,6 +9,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"net"
 	"os"
@@ -38,11 +39,36 @@ type statCounter struct {
 	Bytes, Messages uint64
 }
 
+func (sc *statCounter) Add(n uint64) {
+	if sc == nil {
+		return
+	}
+	sc.Bytes += n
+	sc.Messages++
+}
+
+type statWriter struct {
+	wstats   *statCounter
+	errstats *statCounter
+	io.Writer
+}
+
+func (sw *statWriter) Write(p []byte) (n int, err error) {
+	n, err = sw.Writer.Write(p)
+	if err != nil {
+		sw.errstats.Add(uint64(n))
+		return
+	}
+	sw.wstats.Add(uint64(n))
+	return
+}
+
 type stats struct {
 	StartTime                             time.Time
 	DnstapIn, DnstapError, DnstapFiltered statCounter
 	QnameFiltered                         statCounter
-	NmsgOut, NmsgError, NmsgDiscard       statCounter
+	NmsgOut                               statCounter
+	NmsgUp, NmsgError, NmsgDiscard        statCounter
 }
 
 func (s *stats) Log() {
@@ -51,6 +77,7 @@ func (s *stats) Log() {
 		"dnstap-filtered %d bytes / %d msgs; "+
 		"qname-filtered %d bytes / %d msgs; "+
 		"nmsg-out %d bytes / %d msgs; "+
+		"nmsg-up %d bytes / %d msgs; "+
 		"nmsg-error %d bytes / %d msgs; "+
 		"nmsg-discard %d bytes / %d msgs; ",
 		time.Duration(time.Since(s.StartTime).Seconds())*time.Second,
@@ -59,6 +86,7 @@ func (s *stats) Log() {
 		s.DnstapFiltered.Bytes, s.DnstapFiltered.Messages,
 		s.QnameFiltered.Bytes, s.QnameFiltered.Messages,
 		s.NmsgOut.Bytes, s.NmsgOut.Messages,
+		s.NmsgUp.Bytes, s.NmsgUp.Messages,
 		s.NmsgError.Bytes, s.NmsgError.Messages,
 		s.NmsgDiscard.Bytes, s.NmsgDiscard.Messages,
 	)
@@ -110,7 +138,11 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to dial %s: %v", ctx.Config.UDPOutput, err)
 		}
-		ctx.Output = nmsg.TimedBufferedOutput(conn, ctx.Config.Flush.Duration)
+		statConn := &statWriter{
+			Writer: conn,
+			wstats: &ctx.NmsgOut,
+		}
+		ctx.Output = nmsg.TimedBufferedOutput(statConn, ctx.Config.Flush.Duration)
 		ctx.Output.SetSequenced(true)
 		ctx.Output.SetMaxSize(ctx.Config.MTU, ctx.Config.MTU)
 	}
