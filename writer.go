@@ -9,8 +9,8 @@
 package main
 
 import (
-	"github.com/golang/protobuf/proto"
 	"github.com/farsightsec/sielink"
+	"github.com/golang/protobuf/proto"
 )
 
 // A payloadWriter packs up its input in a sielink Payload as an
