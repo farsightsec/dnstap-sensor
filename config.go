@@ -51,6 +51,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	var inputSocket string
 	var channel uint
 	var trace bool
+	var qfilter nameFilter
 
 	fs := flag.NewFlagSet("dnstap-sensor", flag.ExitOnError)
 
@@ -63,6 +64,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.Var(&retry, "retry", "connection retry interval (default 30s)")
 	fs.Var(&flush, "flush", "buffer flush interval (default 500ms)")
 	fs.Var(&apiKey, "apikey", "apikey or path to apikey file")
+	fs.Var(&qfilter, "filter_qname", "suppress responses to queries under domain")
 	fs.UintVar(&channel, "channel", 0, "channel to upload dnstap data")
 	fs.BoolVar(&trace, "trace", false, "log activity (verbose, recommended for debugging only)")
 	fs.Parse(args)
@@ -72,6 +74,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	conf.Heartbeat.Set("30s")
 	conf.Retry.Set("30s")
 	conf.Flush.Set("500ms")
+	conf.FilterQnames = qfilter
 
 	if configFilename != "" {
 		err = loadConfig(conf, configFilename)
