@@ -64,6 +64,12 @@ func (i dnstapInput) publish(ctx *Context, ch <-chan []byte) {
 			traceMsg(ctx, "Filtering message of type %s", tapm.GetMessage().GetType())
 			continue
 		}
+		ok, _ := ctx.Config.FilterQnames.FilterMsgQname(tapm.GetMessage().GetResponseMessage())
+		if ok {
+			ctx.QnameFiltered.Messages++
+			ctx.QnameFiltered.Bytes += uint64(len(b))
+			continue
+		}
 		p, err := nmsg.Payload(tapm)
 		if err != nil {
 			ctx.NmsgError.Messages++
