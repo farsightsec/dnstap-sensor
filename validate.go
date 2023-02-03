@@ -46,6 +46,11 @@ properties:
         type: string
     tls:
         $ref: "#/definitions/tls"
+    filter_qnames:
+        type: array
+        items:
+            type: string
+            format: hostname
 additionalProperties: false
 definitions:
             tls:

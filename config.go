@@ -30,6 +30,7 @@ type Config struct {
 	Retry         config.Duration `yaml:"retry"`
 	Flush         config.Duration `yaml:"flush"`
 	Trace         bool            `yaml:"-"`
+	FilterQnames  nameFilter      `yaml:"filter_qnames"`
 }
 
 func loadConfig(conf *Config, filename string) error {

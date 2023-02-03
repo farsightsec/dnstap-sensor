@@ -38,6 +38,7 @@ type statCounter struct {
 type stats struct {
 	StartTime                             time.Time
 	DnstapIn, DnstapError, DnstapFiltered statCounter
+	QnameFiltered                         statCounter
 	NmsgOut, NmsgError, NmsgDiscard       statCounter
 }
 
@@ -45,6 +46,7 @@ func (s *stats) Log() {
 	log.Printf("Uptime: %s dnstap-input %d bytes / %d msgs; "+
 		"dnstap-error %d bytes / %d msgs; "+
 		"dnstap-filtered %d bytes / %d msgs; "+
+		"qname-filtered %d bytes / %d msgs; "+
 		"nmsg-out %d bytes / %d msgs; "+
 		"nmsg-error %d bytes / %d msgs; "+
 		"nmsg-discard %d bytes / %d msgs; ",
@@ -52,6 +54,7 @@ func (s *stats) Log() {
 		s.DnstapIn.Bytes, s.DnstapIn.Messages,
 		s.DnstapError.Bytes, s.DnstapError.Messages,
 		s.DnstapFiltered.Bytes, s.DnstapFiltered.Messages,
+		s.QnameFiltered.Bytes, s.QnameFiltered.Messages,
 		s.NmsgOut.Bytes, s.NmsgOut.Messages,
 		s.NmsgError.Bytes, s.NmsgError.Messages,
 		s.NmsgDiscard.Bytes, s.NmsgDiscard.Messages,
