@@ -64,6 +64,14 @@ func (n *nameFilter) UnmarshalYAML(u func(interface{}) error) error {
 	return nil
 }
 
+func (n *nameFilter) Set(s string) error {
+	return n.AddString(s)
+}
+
+func (n *nameFilter) String() string {
+	return ""
+}
+
 var errShortMessage = errors.New("DNS Message too short")
 var errTruncMessage = errors.New("DNS Message truncated")
 var errInvalidQname = errors.New("Invalid qname")
