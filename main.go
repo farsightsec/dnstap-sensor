@@ -10,10 +10,12 @@ package main
 
 import (
 	"log"
+	"net"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/farsightsec/go-nmsg"
 	"github.com/farsightsec/sielink/client"
 )
 
@@ -21,6 +23,7 @@ import (
 type Context struct {
 	*Config
 	client.Client
+	nmsg.Output
 	stats
 }
 
@@ -79,8 +82,11 @@ func main() {
 		APIKey:    ctx.Config.APIKey.String(),
 	}
 
-	ctx.Client = client.NewClient(cconfig)
 	ctx.stats.StartTime = time.Now()
+
+	if len(ctx.Config.Servers) > 0 {
+		ctx.Client = client.NewClient(cconfig)
+	}
 
 	for _, s := range ctx.Config.Servers {
 		if !strings.HasPrefix(s.Path, "/session/") {
@@ -97,6 +103,16 @@ func main() {
 				<-time.After(ctx.Config.Retry.Duration)
 			}
 		}(s.String())
+	}
+
+	if ctx.Config.UDPOutput.UDPAddr != nil {
+		conn, err := net.DialUDP("udp", nil, ctx.Config.UDPOutput.UDPAddr)
+		if err != nil {
+			log.Fatalf("Failed to dial %s: %v", ctx.Config.UDPOutput, err)
+		}
+		ctx.Output = nmsg.TimedBufferedOutput(conn, ctx.Config.Flush.Duration)
+		ctx.Output.SetSequenced(true)
+		ctx.Output.SetMaxSize(ctx.Config.MTU, ctx.Config.MTU)
 	}
 
 	ticker := time.NewTicker(ctx.Config.StatsInterval.Duration)

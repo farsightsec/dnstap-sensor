@@ -17,11 +17,14 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/farsightsec/go-config"
+	"github.com/farsightsec/go-nmsg"
 )
 
 // Config represents the global configuration of the client.
 type Config struct {
 	Servers       []config.URL    `yaml:"servers"`
+	UDPOutput     config.UDPAddr  `yaml:"udp_output"`
+	MTU           int             `yaml:"mtu"`
 	APIKey        config.String   `yaml:"api_key"`
 	Channel       uint32          `yaml:"channel"`
 	DnstapInput   dnstapInput     `yaml:"dnstap_input"`
@@ -50,8 +53,10 @@ func parseConfig(args []string) (conf *Config, err error) {
 	var apiKey config.String
 	var inputSocket string
 	var channel uint
+	var mtu int
 	var trace bool
 	var qfilter nameFilter
+	var udpOutputAddr config.UDPAddr
 
 	fs := flag.NewFlagSet("dnstap-sensor", flag.ExitOnError)
 
@@ -66,7 +71,9 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.Var(&apiKey, "apikey", "apikey or path to apikey file")
 	fs.Var(&qfilter, "filter_qname", "suppress responses to queries under domain")
 	fs.UintVar(&channel, "channel", 0, "channel to upload dnstap data")
+	fs.IntVar(&mtu, "mtu", 0, "UDP output buffer size")
 	fs.BoolVar(&trace, "trace", false, "log activity (verbose, recommended for debugging only)")
+	fs.Var(&udpOutputAddr, "udp_output", "send NMSG UDP output to addr udp:<addr>:host")
 	fs.Parse(args)
 
 	conf = new(Config)
@@ -75,6 +82,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	conf.Retry.Set("30s")
 	conf.Flush.Set("500ms")
 	conf.FilterQnames = qfilter
+	conf.MTU = nmsg.EtherContainerSize
 
 	if configFilename != "" {
 		err = loadConfig(conf, configFilename)
@@ -104,6 +112,13 @@ func parseConfig(args []string) (conf *Config, err error) {
 	if channel != 0 {
 		conf.Channel = uint32(channel)
 	}
+	if udpOutputAddr.UDPAddr != nil {
+		conf.UDPOutput = udpOutputAddr
+	}
+	if mtu > nmsg.MinContainerSize {
+		conf.MTU = mtu
+	}
+
 	conf.Trace = trace
 
 	if fs.NArg() > 0 {
@@ -119,16 +134,16 @@ func parseConfig(args []string) (conf *Config, err error) {
 		conf.Servers = servers
 	}
 
-	if conf.Channel == 0 {
+	if len(conf.Servers) > 0 && conf.Channel == 0 {
 		err = errors.New("no channel specified")
 	}
-	if len(conf.Servers) == 0 {
-		err = errors.New("no servers specified")
+	if len(conf.Servers) == 0 && conf.UDPOutput.UDPAddr == nil {
+		err = errors.New("no servers or output specified")
 	}
 	if conf.DnstapInput == "" {
 		err = errors.New("no input specified")
 	}
-	if conf.APIKey.String() == "" {
+	if len(conf.Servers) > 0 && conf.APIKey.String() == "" {
 		err = errors.New("no API key specified")
 	}
 
