@@ -10,11 +10,23 @@ dnstap-sensor \- upload dnstap data to Farsight Security SIE
 .br
 .B "	--channel \fInumber\fB --input \fIsocket-path\fB [--trace]"
 .br
+.B "	[--filter_qname \fIdomain\fR ... ]"
+.br
 .B "	[--stats_interval \fIduration\fB] [--heartbeat \fIduration\fB]"
 .br
 .B "	[--retry \fIduration\fB] [--flush \fIduration\fB]"
 .br
 .B "	\fIserver-uri\fB [ \fIserver-uri ...\fB ]"
+
+.B dnstap-sensor --input \fIsocket-path\fB [--trace]
+.br
+.B "	--udp_output udp:\fIaddr\fB:\fIport\fB [-mtu \fIsize\fB]"
+.br
+.B "	[--filter_qname \fIdomain\fR ... ]"
+.br
+.B "	[--stats_interval \fIduration\fB]"
+.br
+.B "	[--flush \fIduration\fB]"
 
 .B dnstap-sensor --config \fI/path/to/conffile\fB
 
@@ -40,7 +52,8 @@ to keep the key out of
 output.
 
 The API key must be provided either through the command line
-option or the optional configuration file.
+option or the optional configuration file if any upload
+\fIserver-uri\fRs are configured.
 
 .TP
 .B --input \fIsocket-path\fB
@@ -57,7 +70,13 @@ configuration file.
 Address the Dnstap data to SIE channel \fIchannel-number\fR.
 
 The channel number must be specified on the command line or in the
-optional config file.
+optional config file if any upload \fIserver-uri\fRs are configured.
+
+.TP
+.B --filter_qname \fIdomain\fB
+Filter out responses to queries under \fIdomain\fR in addition to non
+RESOLVER_RESPONSE messages. Multiple \fB--filter_qname\fR options
+may be used to filter out responses to queries in multiple domains.
 
 .TP
 .B --flush \fIduration\fB
@@ -85,6 +104,21 @@ of "0" turns off statistics logging.
 .TP
 .B --trace
 Output additional logging to standard error for debugging.
+
+.TP
+.B --udp_output udp:\fIaddress\fB:\fIport\fB
+Send output NMSG data via UDP to \fIaddress\fR:\fIport\fR. The prefix \fBudp\fR
+may be replaced with \fBudp4\fR or \fBudp6\fR to force IPv4 of IPv6 transport.
+
+A \fB--udp_output\fR may be specified instead of or in addition to server URIs.
+If both are specified, data will be sent to both the UDP output and one of the
+configured server URIs.
+
+.Tp
+.B --mtu \fIsize\fB
+Specify the buffer size to use when sending NMSG data to \fB--udp_output\fR.
+In practice, this number should be lower than the actual interface MTU. The
+default value is 1280 for transport over Ethernet with a 1500 byte MTU.
 
 .TP
 .B --config \fIfile\fB
@@ -127,6 +161,13 @@ Corresponds to the
 command line option.
 
 .TP
+.B filter_qname
+Corresponds to the
+.B --filter_qname
+command line option, a YAML-format list of one or more \fIdomain\fR
+names..
+
+.TP
 .B flush
 Corresponds to the
 .B --flush
@@ -163,6 +204,12 @@ as a list of PEM files under the key \fBrootCAFiles\fR.
 
 If no root CAs are configured, the system default authorized root
 CAs are used.
+
+.TP
+.B udp_output
+Corresponds to the
+.B --udp_output
+command line option
 
 .P
 Values specified with command line options override any corresponding
