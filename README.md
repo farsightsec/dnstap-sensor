@@ -17,6 +17,12 @@ SIE submission servers.
                   wss://server-1/session/dnstap-upload
                   [ wss://server-2/session/dnstap-upload ]
 
+    dnstap-sensor -input /path/to/dnstap.sock
+                  [ -config /path/to/config.yaml ]
+                  [ -stats_interval <interval> ]
+                  [ -flush <interval> ]
+                  [ -mtu <size> ]
+                  -udp_output udp:<address>:<port>
 ## Building
 
 `dnstap-sensor` may be built and installed with:
@@ -42,7 +48,8 @@ override the corresponding values in the config file.
 ### Channel
 
 The channel on which to send NMSG-encapsulated Dnstap data is a required
-parameter. It can be specified in the config file with:
+parameter when any `ws://` or `wss://` server URLs are configured. It
+can be specified in the config file with:
 
         channel: 203
 
@@ -82,6 +89,9 @@ or on the command line with:
 
 The interval is specified in the syntax supported by
 (time.ParseDuration)[https://godoc.org/time#ParseDuration]. Both default to 30s.
+
+Heartbeat and Retry intervals are ignored if no `ws://` or `wss://` server URLs
+are configured.
 
 ### Flush Interval
 
@@ -125,6 +135,9 @@ or on the command line with:
 
         -apikey=<key-or-file>
 
+The API Key parameter is ignored if no `ws://` or `wss://` server URLs are
+configured.
+
 ### Servers
 
 The remainder of the command line arguments to `dnstap-sensor` is treated as
@@ -138,3 +151,33 @@ file with:
 
 At least one server must be specified. If the `/session/` path is not given,
 it defaults to `/session/dnstap-sensor-upload`.
+
+### UDP Output
+
+A UDP output address may be specified in the config file with:
+
+	udp_output: udp:<address>:<port>
+
+or on the command line with:
+
+	-udp_output udp:<address>:<port>
+
+The `udp:` prefix can be replaced with `udp4:` or `udp6:` to force IPv4
+or IPv6 transport.
+
+The UDP output may be used instead of or along with `ws://` or `ws://`
+server URLs. If used together, the UDP output will mirror the data sent
+to the configured servers.
+
+The buffer size for the UDP output may be configured in the config file
+with:
+
+	mtu: <size>
+
+or on the command line with:
+
+	-mtu <size>
+
+The default size is 1280, for transport over 1500 byte MTU ethernet. When
+using loopback interfaces or jumbo frames, a larger `mtu` value is recommended
+for efficiency.
