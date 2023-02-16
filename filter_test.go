@@ -19,7 +19,7 @@ func TestUnmarshalFilter(t *testing.T) {
 
 func testLookup(f nameFilter, name string, res bool) func(t *testing.T) {
 	return func(t *testing.T) {
-		msg := &dns.Msg{Question: []dns.Question{dns.Question{Name: name}}}
+		msg := &dns.Msg{Question: []dns.Question{{Name: name}}}
 		m, err := msg.Pack()
 		if err != nil {
 			t.Errorf("Failed to pack message: %v", err)
