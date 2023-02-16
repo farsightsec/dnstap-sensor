@@ -85,6 +85,12 @@ func (n nameFilter) FilterMsgQname(m []byte) (bool, error) {
 	if len(m) <= 12 {
 		return false, errShortMessage
 	}
+
+	// Pass if qdcount != 1
+	if m[4] != 0 || m[5] != 1 {
+		return false, nil
+	}
+
 	m = m[12:]
 
 	var qnameLen int
