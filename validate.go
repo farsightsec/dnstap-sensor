@@ -29,7 +29,7 @@ properties:
         items:
             type: string
             format: uri
-    output:
+    udp_output:
         type: string
     mtu:
         type: integer
