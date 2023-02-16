@@ -21,7 +21,7 @@ import (
 	"github.com/farsightsec/sielink"
 )
 
-type sliceClient []dnstap.Dnstap
+type sliceClient []*dnstap.Dnstap
 
 func (tc *sliceClient) Close() error                     { return nil }
 func (tc *sliceClient) DialAndHandle(uri string) error   { return nil }
@@ -41,7 +41,7 @@ func (tc *sliceClient) Send(p *sielink.Payload) error {
 			break
 		}
 		if dt, ok := m.(*nmsg_base.Dnstap); ok {
-			msgs = append(msgs, dt.Dnstap)
+			msgs = append(msgs, &dt.Dnstap)
 		}
 	}
 	*tc = msgs
@@ -71,8 +71,9 @@ func TestDnstapMessageType(t *testing.T) {
 	dtch := make(chan []byte)
 
 	go dtin.publish(ctx, dtch)
-	for _, tc := range testCases {
-		b, err := proto.Marshal(&tc)
+	for i := range testCases {
+		tc := &testCases[i]
+		b, err := proto.Marshal(tc)
 		if err != nil {
 			t.Error(tc, err)
 		}
