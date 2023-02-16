@@ -71,10 +71,11 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.Var(&apiKey, "apikey", "apikey or path to apikey file")
 	fs.Var(&qfilter, "filter_qname", "suppress responses to queries under domain")
 	fs.UintVar(&channel, "channel", 0, "channel to upload dnstap data")
-	fs.IntVar(&mtu, "mtu", 0, "UDP output buffer size")
+	fs.IntVar(&mtu, "mtu", nmsg.EtherContainerSize, "UDP output buffer size")
 	fs.BoolVar(&trace, "trace", false, "log activity (verbose, recommended for debugging only)")
 	fs.Var(&udpOutputAddr, "udp_output", "send NMSG UDP output to addr udp:<addr>:host")
 	fs.Parse(args)
+
 
 	conf = new(Config)
 	conf.StatsInterval.Set("15m")
@@ -82,7 +83,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	conf.Retry.Set("30s")
 	conf.Flush.Set("500ms")
 	conf.FilterQnames = qfilter
-	conf.MTU = nmsg.EtherContainerSize
+	conf.MTU = mtu
 
 	if configFilename != "" {
 		err = loadConfig(conf, configFilename)
@@ -115,9 +116,6 @@ func parseConfig(args []string) (conf *Config, err error) {
 	if udpOutputAddr.UDPAddr != nil {
 		conf.UDPOutput = udpOutputAddr
 	}
-	if mtu > nmsg.MinContainerSize {
-		conf.MTU = mtu
-	}
 
 	conf.Trace = trace
 
@@ -145,6 +143,12 @@ func parseConfig(args []string) (conf *Config, err error) {
 	}
 	if len(conf.Servers) > 0 && conf.APIKey.String() == "" {
 		err = errors.New("no API key specified")
+	}
+	if conf.MTU < nmsg.MinContainerSize || conf.MTU > nmsg.MaxContainerSize {
+		err = fmt.Errorf("Invalid MTU %d: must be between %d and %d",
+			conf.MTU,
+			nmsg.MinContainerSize,
+			nmsg.MaxContainerSize)
 	}
 
 	for _, u := range conf.Servers {
