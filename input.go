@@ -43,7 +43,7 @@ func dnstapUnmarshal(b []byte) (*nmsg_base.Dnstap, error) {
 
 func (i dnstapInput) publish(ctx *Context, ch <-chan []byte) {
 	var outputs []nmsg.Output
-	if len(ctx.Config.Servers) > 0 {
+	if ctx.Client != nil {
 		output := nmsg.TimedBufferedOutput(
 			newPayloadWriter(ctx),
 			ctx.Config.Flush.Duration,
