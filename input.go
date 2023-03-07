@@ -75,6 +75,14 @@ func (i dnstapInput) publish(ctx *Context, ch <-chan []byte) {
 		if ok {
 			ctx.QnameFiltered.Messages++
 			ctx.QnameFiltered.Bytes += uint64(len(b))
+			if ctx.Trace {
+				b, ok := dnstap.TextFormat(&tapm.Dnstap)
+				if ok {
+					traceMsg(ctx, "Qname filtered response: %s", string(b))
+				} else {
+					traceMsg(ctx, "Qname filtered response: formatting failed")
+				}
+			}
 			continue
 		}
 		p, err := nmsg.Payload(tapm)
