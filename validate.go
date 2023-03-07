@@ -50,34 +50,12 @@ properties:
         type: string
     flush:
         type: string
-    tls:
-        $ref: "#/definitions/tls"
     filter_qnames:
         type: array
         items:
             type: string
             format: hostname
 additionalProperties: false
-definitions:
-            tls:
-                    type: object
-                    properties:
-                            rootCAFiles:
-                                    type: array
-                                    items:
-                                            type: string
-                            certificates:
-                                    type: array
-                                    items:
-                                            type: object
-                                            properties:
-                                                    certFile:
-                                                            type: string
-                                                    keyFile:
-                                                            type: string
-                                            additionalProperties: false
-                    additionalProperties: false
-
 `)
 var schema *gojsonschema.Schema
 
