@@ -2,7 +2,7 @@
 
 .SH NAME
 
-dnstap-sensor \- upload dnstap data to Farsight Security SIE
+dnstap-sensor \- Convert dnstap data to NMSG for UDP output or SIE upload
 
 .SH SYNOPSIS
 
@@ -161,11 +161,11 @@ Corresponds to the
 command line option.
 
 .TP
-.B filter_qname
+.B filter_qnames
 Corresponds to the
 .B --filter_qname
 command line option, a YAML-format list of one or more \fIdomain\fR
-names..
+names.
 
 .TP
 .B flush
