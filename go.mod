@@ -8,13 +8,13 @@ require (
 	github.com/farsightsec/go-nmsg v0.2.0
 	github.com/farsightsec/sielink v0.1.1
 	github.com/golang/protobuf v1.5.2
+	github.com/miekg/dns v1.1.31
 	github.com/xeipuuv/gojsonschema v1.2.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/farsightsec/golang-framestream v0.3.0 // indirect
-	github.com/miekg/dns v1.1.31 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
