@@ -76,7 +76,6 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.Var(&udpOutputAddr, "udp_output", "send NMSG UDP output to addr udp:<addr>:host")
 	fs.Parse(args)
 
-
 	conf = new(Config)
 	conf.StatsInterval.Set("15m")
 	conf.Heartbeat.Set("30s")
@@ -137,6 +136,9 @@ func parseConfig(args []string) (conf *Config, err error) {
 	}
 	if len(conf.Servers) == 0 && conf.UDPOutput.UDPAddr == nil {
 		err = errors.New("no servers or output specified")
+	}
+	if conf.UDPOutput.UDPAddr != nil && conf.UDPOutput.UDPAddr.Port == 0 {
+		err = errors.New("no UDP port specified")
 	}
 	if conf.DnstapInput == "" {
 		err = errors.New("no input specified")
