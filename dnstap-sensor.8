@@ -196,16 +196,6 @@ command line option.
 A YAML-format list of one or more \fIserver-uri\fRs.
 
 .TP
-.B tls
-Client and root CA certificate configuration. Client certificates
-are given under the \fBcertificates\fR key as a list of dictionaries
-with keys \fBcertFile\fR and \fBkeyFile\fR. Root CAs are expressed
-as a list of PEM files under the key \fBrootCAFiles\fR.
-
-If no root CAs are configured, the system default authorized root
-CAs are used.
-
-.TP
 .B udp_output
 Corresponds to the
 .B --udp_output
@@ -239,15 +229,4 @@ Same as above, using config file, apikey file:
 	  - wss://submit.sie-network.net/
 
 	% dnstap-sensor -config /etc/dnstap-sensor/dnstap-sensor.conf
-.fi
-
-TLS configuration in config file:
-
-.nf
-	tls:
-	    certificates:
-	        - certFile: /etc/dnstap-sensor/client.cert.pem
-	          keyFile: /etc/dnstap-sensor/client.key.pem
-	    rootCAFiles:
-	        - /etc/dnstap-sensor/server.CA.pem
 .fi
