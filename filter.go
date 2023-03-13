@@ -103,6 +103,7 @@ func (n nameFilter) FilterMsgQname(m []byte) (bool, error) {
 
 	m = m[12:]
 
+	// Downcase qname before lookup
 	var name []byte
 	for i := 0; i < len(m); i += int(m[i]) + 1 {
 		llen := int(m[i])
