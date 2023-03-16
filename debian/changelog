@@ -1,5 +1,15 @@
+dnstap-sensor (0.3.0-1) debian-fsi; urgency=medium
+
+  * Add udp-output option for UDP output. And add -mtu option for
+    setting buffer size.
+
+  * Add filter_qname/filter_qnames feature to suppress responses
+    to queries under domains.
+
+ -- Farsight Security, Inc. <software@farsightsecurity.com>  Thu, 16 Mar 2023 18:08:19 +0000
+
 dnstap-sensor (0.2.0-1) debian-farsightsec; urgency=medium
 
   * Initial public release.
 
- -- Farsight Security, Inc. <software@farsightsecurity.com>  Fri, 23 Aug 2019 12:00:00 -0500 
+ -- Farsight Security, Inc. <software@farsightsecurity.com>  Fri, 23 Aug 2019 12:00:00 -0500
