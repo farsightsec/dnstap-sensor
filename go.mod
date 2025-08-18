@@ -1,6 +1,8 @@
 module github.com/farsightsec/dnstap-sensor
 
-go 1.19
+go 1.23.0
+
+toolchain go1.24.6
 
 require (
 	github.com/dnstap/golang-dnstap v0.4.0
@@ -17,8 +19,8 @@ require (
 	github.com/farsightsec/golang-framestream v0.3.0 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
-	golang.org/x/crypto v0.1.0 // indirect
-	golang.org/x/net v0.1.0 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 )
