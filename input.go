@@ -10,10 +10,13 @@ package main
 
 import (
 	"log"
+	"net"
+	"strings"
 
-	"github.com/dnstap/golang-dnstap"
+	dnstap "github.com/dnstap/golang-dnstap"
 	"github.com/golang/protobuf/proto"
 
+	"github.com/farsightsec/go-config"
 	"github.com/farsightsec/go-nmsg"
 	"github.com/farsightsec/go-nmsg/nmsg_base"
 )
@@ -21,11 +24,23 @@ import (
 type dnstapInput string
 
 func (i dnstapInput) run(ctx *Context) {
+	var fsinput dnstap.Input
+	var err error
 	traceMsg(ctx, "Opening dnstap socket input at %s", i)
-	fsinput, err := dnstap.NewFrameStreamSockInputFromPath(string(i))
+	var addr config.Addr
+	if strings.Contains(string(i), ":") {
+		err = addr.Set(string(i))
+	} else {
+		err = addr.Set("unix:" + string(i))
+	}
+	if err != nil {
+		log.Fatalf("Invalid input address '%s'", string(i))
+	}
+	listener, err := net.Listen(addr.Network(), addr.String())
 	if err != nil {
 		log.Fatalf("Could not listen on %s: %s", i, err.Error())
 	}
+	fsinput = dnstap.NewFrameStreamSockInput(listener)
 	ch := make(chan []byte, 100)
 	go i.publish(ctx, ch)
 	fsinput.ReadInto(ch)

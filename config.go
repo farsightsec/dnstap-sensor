@@ -63,7 +63,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.StringVar(&configFilename, "config", "",
 		"Location of client config file")
 	fs.StringVar(&inputSocket, "input", "",
-		"Path to dnstap input socket")
+		"[unix:]<path> to OR tcp:<addr>:<port> for dnstap input socket")
 	fs.Var(&statsInterval, "stats_interval", "statistics logging interval (default 15m)")
 	fs.Var(&heartBeat, "heartbeat", "heartbeat interval (default 30s)")
 	fs.Var(&retry, "retry", "connection retry interval (default 30s)")
@@ -73,7 +73,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.UintVar(&channel, "channel", 0, "channel to upload dnstap data")
 	fs.IntVar(&mtu, "mtu", nmsg.EtherContainerSize, "UDP output buffer size")
 	fs.BoolVar(&trace, "trace", false, "log activity (verbose, recommended for debugging only)")
-	fs.Var(&udpOutputAddr, "udp_output", "send NMSG UDP output to addr udp:<addr>:host")
+	fs.Var(&udpOutputAddr, "udp_output", "send NMSG UDP output to addr udp:<addr>:<port>")
 	fs.Parse(args)
 
 	conf = new(Config)
