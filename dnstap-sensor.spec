@@ -12,7 +12,7 @@
 
 # https://github.com/farsightsec/dnstap-sensor
 %global goipath         github.com/farsightsec/dnstap-sensor
-Version:                tags/v0.3.0
+Version:                0.3.0
 %global tag             tags/v0.3.0
 
 # REMOVE BEFORE SUBMITTING THIS FOR REVIEW
