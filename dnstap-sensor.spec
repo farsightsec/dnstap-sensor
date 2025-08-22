@@ -25,7 +25,7 @@ Version:                0.3.0
 # you'll need to coordinate the removal of the package's dependents first.
 # ---
 # REMOVE BEFORE SUBMITTING THIS FOR REVIEW
-%gometa -L -f
+%gometa -f
 
 %global common_description %{expand:
 Dnstap-based SIE DNS sensor.}
