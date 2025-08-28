@@ -8,10 +8,10 @@ require (
 	github.com/dnstap/golang-dnstap v0.4.0
 	github.com/farsightsec/go-config v0.0.0-20190917161310-3eab84970e6b
 	github.com/farsightsec/go-nmsg v0.2.0
-	github.com/farsightsec/sielink v0.1.1
-	github.com/golang/protobuf v1.5.2
+	github.com/farsightsec/sielink v0.1.2-0.20250826154232-83c0ff8f968d
 	github.com/miekg/dns v1.1.31
 	github.com/xeipuuv/gojsonschema v1.2.0
+	google.golang.org/protobuf v1.36.8
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -22,5 +22,4 @@ require (
 	golang.org/x/crypto v0.41.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
-	google.golang.org/protobuf v1.26.0 // indirect
 )

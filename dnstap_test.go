@@ -14,7 +14,7 @@ import (
 	"time"
 
 	dnstap "github.com/dnstap/golang-dnstap"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 
 	nmsg "github.com/farsightsec/go-nmsg"
 	"github.com/farsightsec/go-nmsg/nmsg_base"

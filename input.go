@@ -11,8 +11,8 @@ package main
 import (
 	"log"
 
-	"github.com/dnstap/golang-dnstap"
-	"github.com/golang/protobuf/proto"
+	dnstap "github.com/dnstap/golang-dnstap"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/farsightsec/go-nmsg"
 	"github.com/farsightsec/go-nmsg/nmsg_base"
