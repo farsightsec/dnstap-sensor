@@ -59,20 +59,20 @@ additionalProperties: false
 `)
 var schema *gojsonschema.Schema
 
-// stringifyMap converts a map[interface{}]interface{} as returned from
-// yaml.Unmarshal into a map[string]interface{} usable by the json-schema
+// stringifyMap converts a map[any]any as returned from
+// yaml.Unmarshal into a map[string]any usable by the json-schema
 // library.
-func stringifyMap(in map[interface{}]interface{}) map[string]interface{} {
-	ret := make(map[string]interface{})
+func stringifyMap(in map[any]any) map[string]any {
+	ret := make(map[string]any)
 	for k, v := range in {
 		key, ok := k.(string)
 		if !ok {
 			key = fmt.Sprintf("%s", k)
 		}
 		switch v := v.(type) {
-		case []interface{}:
+		case []any:
 			ret[key] = stringifySlice(v)
-		case map[interface{}]interface{}:
+		case map[any]any:
 			ret[key] = stringifyMap(v)
 		default:
 			ret[key] = v
@@ -81,15 +81,15 @@ func stringifyMap(in map[interface{}]interface{}) map[string]interface{} {
 	return ret
 }
 
-// stringifySlice converts map[interface{}]interface{} elements of
-// the input []interface{} to map[string]interface{} using stringifyMap
-func stringifySlice(in []interface{}) []interface{} {
-	var ret []interface{}
+// stringifySlice converts map[any]any elements of
+// the input []any to map[string]any using stringifyMap
+func stringifySlice(in []any) []any {
+	var ret []any
 	for _, v := range in {
 		switch v := v.(type) {
-		case []interface{}:
+		case []any:
 			ret = append(ret, stringifySlice(v))
-		case map[interface{}]interface{}:
+		case map[any]any:
 			ret = append(ret, stringifyMap(v))
 		default:
 			ret = append(ret, v)
@@ -99,7 +99,7 @@ func stringifySlice(in []interface{}) []interface{} {
 }
 
 func init() {
-	var schemaObject map[interface{}]interface{}
+	var schemaObject map[any]any
 	err := yaml.Unmarshal(schemaYaml, &schemaObject)
 	if err != nil {
 		log.Fatal("init-yaml: ", err)
@@ -124,7 +124,7 @@ func (e errList) Error() string {
 // Validate parses the configuration contents in the supplied buffer and
 // returns nil if it is a valid config, or an appropriate error otherwise.
 func Validate(b []byte) error {
-	var configObject map[interface{}]interface{}
+	var configObject map[any]any
 	err := yaml.Unmarshal(b, &configObject)
 	if err != nil {
 		return err

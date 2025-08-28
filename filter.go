@@ -49,7 +49,7 @@ func (n nameFilter) Lookup(name []byte) bool {
 	return false
 }
 
-func (n *nameFilter) UnmarshalYAML(u func(interface{}) error) error {
+func (n *nameFilter) UnmarshalYAML(u func(any) error) error {
 	var l []string
 	var err error
 

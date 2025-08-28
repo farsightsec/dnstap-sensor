@@ -28,7 +28,7 @@ type Context struct {
 	stats
 }
 
-func traceMsg(ctx *Context, fmt string, args ...interface{}) {
+func traceMsg(ctx *Context, fmt string, args ...any) {
 	if !ctx.Trace {
 		return
 	}
