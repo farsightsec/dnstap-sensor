@@ -2,8 +2,9 @@ package main
 
 import (
 	"errors"
-	"github.com/miekg/dns"
 	"strings"
+
+	"github.com/miekg/dns"
 )
 
 type nameFilter map[string]bool
