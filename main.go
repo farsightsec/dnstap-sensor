@@ -28,11 +28,11 @@ type Context struct {
 	stats
 }
 
-func traceMsg(ctx *Context, fmt string, args ...any) {
+func traceMsg(ctx *Context, format string, args ...any) {
 	if !ctx.Trace {
 		return
 	}
-	log.Printf(fmt, args...)
+	log.Printf(format, args...)
 }
 
 type statCounter struct {
@@ -149,7 +149,7 @@ func main() {
 
 	ticker := time.NewTicker(ctx.Config.StatsInterval.Duration)
 	go func() {
-		for _ = range ticker.C {
+		for range ticker.C {
 			ctx.stats.Log()
 		}
 	}()
