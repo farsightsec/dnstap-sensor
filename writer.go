@@ -10,7 +10,6 @@ package main
 
 import (
 	"github.com/farsightsec/sielink"
-	"google.golang.org/protobuf/proto"
 )
 
 // A payloadWriter packs up its input in a sielink Payload as an
@@ -29,10 +28,11 @@ type payloadWriter struct {
 
 func newPayloadWriter(ctx *Context) *payloadWriter {
 	wchan := make(chan *sielink.Payload, 1)
+	channel := ctx.Config.Channel
 	res := &payloadWriter{
 		ctx:          ctx,
 		writeChannel: wchan,
-		channel:      proto.Uint32(ctx.Config.Channel),
+		channel:      &channel,
 	}
 	go func() {
 		for p := range wchan {
