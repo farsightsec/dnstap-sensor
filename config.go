@@ -119,7 +119,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	conf.Trace = trace
 
 	if fs.NArg() > 0 {
-		servers := make([]config.URL, 0, flag.NArg())
+		servers := make([]config.URL, 0, fs.NArg())
 		for _, s := range fs.Args() {
 			u := config.URL{}
 			if perr := u.Set(s); perr != nil {
@@ -132,22 +132,22 @@ func parseConfig(args []string) (conf *Config, err error) {
 	}
 
 	if len(conf.Servers) > 0 && conf.Channel == 0 {
-		err = errors.New("no channel specified")
+		return nil, errors.New("no channel specified")
 	}
 	if len(conf.Servers) == 0 && conf.UDPOutput.UDPAddr == nil {
-		err = errors.New("no servers or output specified")
+		return nil, errors.New("no servers or output specified")
 	}
 	if conf.UDPOutput.UDPAddr != nil && conf.UDPOutput.UDPAddr.Port == 0 {
-		err = errors.New("no UDP port specified")
+		return nil, errors.New("no UDP port specified")
 	}
 	if conf.DnstapInput == "" {
-		err = errors.New("no input specified")
+		return nil, errors.New("no input specified")
 	}
 	if len(conf.Servers) > 0 && conf.APIKey.String() == "" {
-		err = errors.New("no API key specified")
+		return nil, errors.New("no API key specified")
 	}
 	if conf.MTU < nmsg.MinContainerSize || conf.MTU > nmsg.MaxContainerSize {
-		err = fmt.Errorf("Invalid MTU %d: must be between %d and %d",
+		return nil, fmt.Errorf("Invalid MTU %d: must be between %d and %d",
 			conf.MTU,
 			nmsg.MinContainerSize,
 			nmsg.MaxContainerSize)

@@ -52,13 +52,13 @@ func (c *payloadWriter) sendPayload(p *sielink.Payload) {
 		// case needs to be moved under a default: case.
 		select {
 		case c.writeChannel <- p:
-			c.ctx.NmsgUp.Messages++
-			c.ctx.NmsgUp.Bytes += uint64(len(p.GetData()))
+			c.ctx.NmsgUp.Messages.Add(1)
+			c.ctx.NmsgUp.Bytes.Add(uint64(len(p.GetData())))
 			return
 		case discard := <-c.writeChannel:
 			p.RecordDiscard(discard)
-			c.ctx.NmsgDiscard.Messages++
-			c.ctx.NmsgDiscard.Bytes += uint64(len(discard.GetData()))
+			c.ctx.NmsgDiscard.Messages.Add(1)
+			c.ctx.NmsgDiscard.Bytes.Add(uint64(len(discard.GetData())))
 		}
 	}
 }

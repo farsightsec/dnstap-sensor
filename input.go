@@ -56,25 +56,25 @@ func (i dnstapInput) publish(ctx *Context, ch <-chan []byte) {
 		outputs = append(outputs, ctx.Output)
 	}
 	for b := range ch {
-		ctx.DnstapIn.Messages++
-		ctx.DnstapIn.Bytes += uint64(len(b))
+		ctx.DnstapIn.Messages.Add(1)
+		ctx.DnstapIn.Bytes.Add(uint64(len(b)))
 		tapm, err := dnstapUnmarshal(b)
 		if err != nil {
-			ctx.DnstapError.Messages++
-			ctx.DnstapError.Bytes += uint64(len(b))
+			ctx.DnstapError.Messages.Add(1)
+			ctx.DnstapError.Bytes.Add(uint64(len(b)))
 			traceMsg(ctx, "Error unmarshaling Dnstap message: %s", err)
 			continue
 		}
 		if tapm.GetMessage().GetType() != dnstap.Message_RESOLVER_RESPONSE {
-			ctx.DnstapFiltered.Messages++
-			ctx.DnstapFiltered.Bytes += uint64(len(b))
+			ctx.DnstapFiltered.Messages.Add(1)
+			ctx.DnstapFiltered.Bytes.Add(uint64(len(b)))
 			traceMsg(ctx, "Filtering message of type %s", tapm.GetMessage().GetType())
 			continue
 		}
 		ok, _ := ctx.Config.FilterQnames.FilterMsgQname(tapm.GetMessage().GetResponseMessage())
 		if ok {
-			ctx.QnameFiltered.Messages++
-			ctx.QnameFiltered.Bytes += uint64(len(b))
+			ctx.QnameFiltered.Messages.Add(1)
+			ctx.QnameFiltered.Bytes.Add(uint64(len(b)))
 			if ctx.Trace {
 				b, ok := dnstap.TextFormat(&tapm.Dnstap)
 				if ok {
@@ -87,8 +87,8 @@ func (i dnstapInput) publish(ctx *Context, ch <-chan []byte) {
 		}
 		p, err := nmsg.Payload(tapm)
 		if err != nil {
-			ctx.NmsgError.Messages++
-			ctx.NmsgError.Bytes += uint64(len(b))
+			ctx.NmsgError.Messages.Add(1)
+			ctx.NmsgError.Bytes.Add(uint64(len(b)))
 			traceMsg(ctx, "Error converting to NMSG: %s", err)
 			continue
 		}
