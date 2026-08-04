@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 DomainTools LLC
  * Copyright (c) 2017,2019 Farsight Security, Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -10,7 +11,7 @@ package main
 
 import (
 	"github.com/farsightsec/sielink"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // A payloadWriter packs up its input in a sielink Payload as an
