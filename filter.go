@@ -2,8 +2,9 @@ package main
 
 import (
 	"errors"
-	"github.com/miekg/dns"
 	"strings"
+
+	"github.com/miekg/dns"
 )
 
 type nameFilter map[string]bool
@@ -14,7 +15,7 @@ func (n *nameFilter) AddString(name string) error {
 	}
 
 	name = strings.ToLower(name)
-	if name[len(name)-1] != '.' {
+	if len(name) != 0 && name[len(name)-1] != '.' {
 		name += "."
 	}
 	b := make([]byte, len(name)+1)

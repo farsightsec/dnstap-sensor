@@ -14,6 +14,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/farsightsec/go-nmsg"
@@ -36,15 +37,16 @@ func traceMsg(ctx *Context, fmt string, args ...interface{}) {
 }
 
 type statCounter struct {
-	Bytes, Messages uint64
+	Bytes    atomic.Uint64
+	Messages atomic.Uint64
 }
 
 func (sc *statCounter) Add(n uint64) {
 	if sc == nil {
 		return
 	}
-	sc.Bytes += n
-	sc.Messages++
+	sc.Bytes.Add(n)
+	sc.Messages.Add(1)
 }
 
 type statWriter struct {
@@ -64,11 +66,15 @@ func (sw *statWriter) Write(p []byte) (n int, err error) {
 }
 
 type stats struct {
-	StartTime                             time.Time
-	DnstapIn, DnstapError, DnstapFiltered statCounter
-	QnameFiltered                         statCounter
-	NmsgOut                               statCounter
-	NmsgUp, NmsgError, NmsgDiscard        statCounter
+	StartTime      time.Time
+	DnstapIn       statCounter
+	DnstapError    statCounter
+	DnstapFiltered statCounter
+	QnameFiltered  statCounter
+	NmsgOut        statCounter
+	NmsgUp         statCounter
+	NmsgError      statCounter
+	NmsgDiscard    statCounter
 }
 
 func (s *stats) Log() {
@@ -81,14 +87,14 @@ func (s *stats) Log() {
 		"nmsg-error %d bytes / %d msgs; "+
 		"nmsg-discard %d bytes / %d msgs; ",
 		time.Duration(time.Since(s.StartTime).Seconds())*time.Second,
-		s.DnstapIn.Bytes, s.DnstapIn.Messages,
-		s.DnstapError.Bytes, s.DnstapError.Messages,
-		s.DnstapFiltered.Bytes, s.DnstapFiltered.Messages,
-		s.QnameFiltered.Bytes, s.QnameFiltered.Messages,
-		s.NmsgOut.Bytes, s.NmsgOut.Messages,
-		s.NmsgUp.Bytes, s.NmsgUp.Messages,
-		s.NmsgError.Bytes, s.NmsgError.Messages,
-		s.NmsgDiscard.Bytes, s.NmsgDiscard.Messages,
+		s.DnstapIn.Bytes.Load(), s.DnstapIn.Messages.Load(),
+		s.DnstapError.Bytes.Load(), s.DnstapError.Messages.Load(),
+		s.DnstapFiltered.Bytes.Load(), s.DnstapFiltered.Messages.Load(),
+		s.QnameFiltered.Bytes.Load(), s.QnameFiltered.Messages.Load(),
+		s.NmsgOut.Bytes.Load(), s.NmsgOut.Messages.Load(),
+		s.NmsgUp.Bytes.Load(), s.NmsgUp.Messages.Load(),
+		s.NmsgError.Bytes.Load(), s.NmsgError.Messages.Load(),
+		s.NmsgDiscard.Bytes.Load(), s.NmsgDiscard.Messages.Load(),
 	)
 }
 

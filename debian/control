@@ -1,7 +1,7 @@
 Source: dnstap-sensor
 Section: net
 Priority: optional
-Maintainer: Farsight Security <software@farsightsecurity.com>
+Maintainer: DomainTools LLC <software@domaintools.com>
 Build-Depends: debhelper (>> 9),
                dh-golang,
                golang-go,
