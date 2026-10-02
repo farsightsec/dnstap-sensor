@@ -1,6 +1,7 @@
-dnstap-sensor (0.3.1) debian-fsi; urgency=medium
+dnstap-sensor (0.3.1-1) debian-fsi; urgency=medium
 
-  * TODO
+  * Add support for tcp input with -input tcp:<host>:<port>
+  * Update dependency versions.
 
  -- DomainTools LLC <software@domaintools.com>  Thu, 11 Sep 2026 12:00:00 -0700
 
