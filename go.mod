@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/dnstap/golang-dnstap v0.4.0
 	github.com/farsightsec/go-config v0.0.0-20260731215039-abda42749461
-	github.com/farsightsec/go-nmsg v0.3.0
+	github.com/farsightsec/go-nmsg v0.4.0
 	github.com/farsightsec/sielink v0.1.1
 	github.com/miekg/dns v1.1.72
 	github.com/xeipuuv/gojsonschema v1.2.0
