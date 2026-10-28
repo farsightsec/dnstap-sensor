@@ -14,8 +14,8 @@ Build-Depends: debhelper (>> 9),
 	       golang-github-xeipuuv-gojsonschema-dev,
 	       golang-github-pebbe-zmq4-dev,
 	       golang-gopkg-yaml.v2-dev,
-	       golang-goprotobuf-dev
-	       pkg-config,
+	       golang-goprotobuf-dev,
+	       pkg-config
 Standards-Version: 3.9.8
 Homepage: https://www.farsightsecurity.com
 XS-Go-Import-Path: github.com/farsightsec/dnstap-sensor
