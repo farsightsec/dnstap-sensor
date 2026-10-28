@@ -1,12 +1,13 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0
 Upstream-Name: dnstap-sensor
-Upstream-Contact: Farsight Security, Inc.
-Source: https://www.farsightsecurity.com
+Upstream-Contact: DomainTools LLC
+Source: https://www.domaintools.com
 
 Files: *
-Author: Farsight Security, Inc.
-Copyright: 2023 DomainTools LLC
-   2017-2019, Farsight Security, Inc.
+Author: DomainTools LLC
+Copyright: 2026 DomainTools LLC
+           2023 DomainTools LLC
+           2017-2019, Farsight Security, Inc.
 License: MPL-2.0
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
