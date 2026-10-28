@@ -12,6 +12,7 @@ Build-Depends: debhelper (>> 9),
 	       golang-github-farsightsec-sielink-dev,
 	       golang-github-dnstap-go-dnstap-dev,
 	       golang-github-xeipuuv-gojsonschema-dev,
+	       golang-github-pebbe-zmq4-dev,
 	       golang-gopkg-yaml.v2-dev,
 	       golang-goprotobuf-dev
 Standards-Version: 3.9.8
