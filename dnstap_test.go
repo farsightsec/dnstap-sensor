@@ -28,6 +28,7 @@ func (tc *sliceClient) Close() error                     { return nil }
 func (tc *sliceClient) DialAndHandle(uri string) error   { return nil }
 func (tc *sliceClient) Receive() <-chan *sielink.Payload { return nil }
 func (tc *sliceClient) Subscribe(...uint32)              {}
+func (tc *sliceClient) Ready() <-chan struct{}           { return nil }
 
 func (tc *sliceClient) Send(p *sielink.Payload) error {
 	inp := nmsg.NewInput(bytes.NewReader(p.GetData()), len(p.GetData()))
@@ -94,6 +95,7 @@ type chanClient chan *sielink.Payload
 func (cc chanClient) DialAndHandle(uri string) error   { return nil }
 func (cc chanClient) Receive() <-chan *sielink.Payload { return nil }
 func (cc chanClient) Subscribe(...uint32)              {}
+func (cc chanClient) Ready() <-chan struct{}           { return nil }
 
 func (cc chanClient) Close() error {
 	close(cc)
