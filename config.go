@@ -143,22 +143,22 @@ func parseConfig(args []string) (conf *Config, err error) {
 	}
 
 	if len(conf.Servers) > 0 && conf.Channel == 0 {
-		err = joinErr(err,errors.New("no channel specified"))
+		err = joinErr(err, errors.New("no channel specified"))
 	}
 	if len(conf.Servers) == 0 && conf.UDPOutput.UDPAddr == nil {
-		err = joinErr(err,errors.New("no servers or output specified"))
+		err = joinErr(err, errors.New("no servers or output specified"))
 	}
 	if conf.UDPOutput.UDPAddr != nil && conf.UDPOutput.UDPAddr.Port == 0 {
-		err = joinErr(err,errors.New("no UDP port specified"))
+		err = joinErr(err, errors.New("no UDP port specified"))
 	}
 	if conf.DnstapInput == "" {
-		err = joinErr(err,errors.New("no input specified"))
+		err = joinErr(err, errors.New("no input specified"))
 	}
 	if len(conf.Servers) > 0 && conf.APIKey.String() == "" {
-		err = joinErr(err,errors.New("no API key specified"))
+		err = joinErr(err, errors.New("no API key specified"))
 	}
 	if conf.MTU < nmsg.MinContainerSize || conf.MTU > nmsg.MaxContainerSize {
-		err = joinErr(err,fmt.Errorf("Invalid MTU %d: must be between %d and %d",
+		err = joinErr(err, fmt.Errorf("Invalid MTU %d: must be between %d and %d",
 			conf.MTU, nmsg.MinContainerSize, nmsg.MaxContainerSize))
 	}
 
@@ -166,7 +166,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 		switch u.Scheme {
 		case "ws", "wss":
 		default:
-			err = joinErr(err,fmt.Errorf("Invalid URI scheme %s in %s",
+			err = joinErr(err, fmt.Errorf("Invalid URI scheme %s in %s",
 				u.Scheme, u))
 			return
 		}
