@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 DomainTools LLC
  * Copyright (c) 2019 Farsight Security, Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -14,7 +15,7 @@ import (
 	"time"
 
 	dnstap "github.com/dnstap/golang-dnstap"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 
 	nmsg "github.com/farsightsec/go-nmsg"
 	"github.com/farsightsec/go-nmsg/nmsg_base"
@@ -27,6 +28,7 @@ func (tc *sliceClient) Close() error                     { return nil }
 func (tc *sliceClient) DialAndHandle(uri string) error   { return nil }
 func (tc *sliceClient) Receive() <-chan *sielink.Payload { return nil }
 func (tc *sliceClient) Subscribe(...uint32)              {}
+func (tc *sliceClient) Ready() <-chan struct{}           { return nil }
 
 func (tc *sliceClient) Send(p *sielink.Payload) error {
 	inp := nmsg.NewInput(bytes.NewReader(p.GetData()), len(p.GetData()))
@@ -93,6 +95,7 @@ type chanClient chan *sielink.Payload
 func (cc chanClient) DialAndHandle(uri string) error   { return nil }
 func (cc chanClient) Receive() <-chan *sielink.Payload { return nil }
 func (cc chanClient) Subscribe(...uint32)              {}
+func (cc chanClient) Ready() <-chan struct{}           { return nil }
 
 func (cc chanClient) Close() error {
 	close(cc)

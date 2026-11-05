@@ -8,7 +8,7 @@ dnstap-sensor \- Convert dnstap data to NMSG for UDP output or SIE upload
 
 .B dnstap-sensor --apikey (\fIkey\fB|\fIkeyfile-path\fB)
 .br
-.B "	--channel \fInumber\fB --input \fIsocket-path\fB [--trace]"
+.B "	--channel \fInumber\fB --input (\fIsocket-path\fB|tcp[4|6]:\fIhost:port\fB) [--trace]"
 .br
 .B "	[--filter_qname \fIdomain\fR ... ]"
 .br
@@ -18,7 +18,7 @@ dnstap-sensor \- Convert dnstap data to NMSG for UDP output or SIE upload
 .br
 .B "	\fIserver-uri\fB [ \fIserver-uri ...\fB ]"
 
-.B dnstap-sensor --input \fIsocket-path\fB [--trace]
+.B dnstap-sensor --input (\fIsocket-path\fB|tcp[4|6]:\fIhost:port\fB) [--trace]
 .br
 .B "	--udp_output udp:\fIaddr\fB:\fIport\fB [-mtu \fIsize\fB]"
 .br
@@ -56,11 +56,18 @@ option or the optional configuration file if any upload
 \fIserver-uri\fRs are configured.
 
 .TP
-.B --input \fIsocket-path\fB
-Collect dnstap input from the UNIX domain socket at \fIsocket-path\fR.
-\fBdnstap-sensor\fR will create this socket and accept connections
-from the DNS server. Note that this requires \fBdnstap-sensor\fR be
-invoked as the same user as the DNS server.
+.B --input ([unix:]\fIsocket-path\fB|tcp[4|6]:\fIhost:port\fB)
+Specify the dnstap input socket.
+
+If the \fI--input\fR argument is prefaced with \fIunix:\fR or does
+not contain a colon (\fI:\fR) character, it is treated as the path
+to a UNIX domain socket. \fBdnstap-sensor\fR will create this socket
+and accept connections from the DNS server. Note that this requires
+\fBdnstap-sensor\fR be invoked as the same user as the DNS server.
+
+If prefaced with \fItcp:\fR, \fItcp4:\fR, or \fItcp6:\fR, the argument
+specifies a TCP listening address, with \fItcp4\fR and \fItcp6\fR useful
+for specifying the socket by hostname on dual-stack hosts.
 
 An input must be specified on the command line or in the optional
 configuration file.
