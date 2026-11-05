@@ -4,8 +4,8 @@ github.com/dnstap/golang-dnstap v0.4.0 h1:KRHBoURygdGtBjDI2w4HifJfMAhhOqDuktAoka
 github.com/dnstap/golang-dnstap v0.4.0/go.mod h1:FqsSdH58NAmkAvKcpyxht7i4FoBjKu8E4JUPt8ipSUs=
 github.com/farsightsec/go-config v0.3.0 h1:otMXGH3srRM9uH0Vaqj0rzzmXH+ajMp0+ZpYfcKAfH8=
 github.com/farsightsec/go-config v0.3.0/go.mod h1:wJgfAH1LCdE5///cksR/YeA3RNYxgsNK+wJOfu9EADQ=
-github.com/farsightsec/go-nmsg v0.4.0 h1:qHqEY14dc/foEKb4CSdNmNBeB8iuVUURSNkrK3IA96U=
-github.com/farsightsec/go-nmsg v0.4.0/go.mod h1:+9af9Q8yJTuA8bxewwOrx88ErttBEDlrI9UswAZL4mI=
+github.com/farsightsec/go-nmsg v0.4.1 h1:iUY1KmEYlwtQZQ3kkse19hlJ8aCRkrrNmNU0v5gZyMU=
+github.com/farsightsec/go-nmsg v0.4.1/go.mod h1:+9af9Q8yJTuA8bxewwOrx88ErttBEDlrI9UswAZL4mI=
 github.com/farsightsec/golang-framestream v0.3.0 h1:/spFQHucTle/ZIPkYqrfshQqPe2VQEzesH243TjIwqA=
 github.com/farsightsec/golang-framestream v0.3.0/go.mod h1:eNde4IQyEiA5br02AouhEHCu3p3UzrCdFR4LuQHklMI=
 github.com/farsightsec/sielink v0.1.1 h1:eRh9/jDTyfF3YksJx5/GvbU3+oXI8JDosswfQemV4dg=
