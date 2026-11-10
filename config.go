@@ -20,6 +20,17 @@ import (
 	"github.com/farsightsec/go-nmsg"
 )
 
+// Substitute for errors.Join() designed for OS's that do not support Go v1.20.
+func joinErr(a, b error) error {
+	if a == nil {
+		return b
+	}
+	if b == nil {
+		return a
+	}
+	return fmt.Errorf("%s\n%s", a, b)
+}
+
 // Config represents the global configuration of the client.
 type Config struct {
 	Servers       []config.URL    `yaml:"servers"`
@@ -63,7 +74,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.StringVar(&configFilename, "config", "",
 		"Location of client config file")
 	fs.StringVar(&inputSocket, "input", "",
-		"Path to dnstap input socket")
+		"[unix:]<path> to OR tcp:<addr>:<port> for dnstap input socket")
 	fs.Var(&statsInterval, "stats_interval", "statistics logging interval (default 15m)")
 	fs.Var(&heartBeat, "heartbeat", "heartbeat interval (default 30s)")
 	fs.Var(&retry, "retry", "connection retry interval (default 30s)")
@@ -73,7 +84,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	fs.UintVar(&channel, "channel", 0, "channel to upload dnstap data")
 	fs.IntVar(&mtu, "mtu", nmsg.EtherContainerSize, "UDP output buffer size")
 	fs.BoolVar(&trace, "trace", false, "log activity (verbose, recommended for debugging only)")
-	fs.Var(&udpOutputAddr, "udp_output", "send NMSG UDP output to addr udp:<addr>:host")
+	fs.Var(&udpOutputAddr, "udp_output", "send NMSG UDP output to addr udp:<addr>:<port>")
 	fs.Parse(args)
 
 	conf = new(Config)
@@ -119,7 +130,7 @@ func parseConfig(args []string) (conf *Config, err error) {
 	conf.Trace = trace
 
 	if fs.NArg() > 0 {
-		servers := make([]config.URL, 0, flag.NArg())
+		servers := make([]config.URL, 0, fs.NArg())
 		for _, s := range fs.Args() {
 			u := config.URL{}
 			if perr := u.Set(s); perr != nil {
@@ -132,33 +143,31 @@ func parseConfig(args []string) (conf *Config, err error) {
 	}
 
 	if len(conf.Servers) > 0 && conf.Channel == 0 {
-		err = errors.New("no channel specified")
+		err = joinErr(err, errors.New("no channel specified"))
 	}
 	if len(conf.Servers) == 0 && conf.UDPOutput.UDPAddr == nil {
-		err = errors.New("no servers or output specified")
+		err = joinErr(err, errors.New("no servers or output specified"))
 	}
 	if conf.UDPOutput.UDPAddr != nil && conf.UDPOutput.UDPAddr.Port == 0 {
-		err = errors.New("no UDP port specified")
+		err = joinErr(err, errors.New("no UDP port specified"))
 	}
 	if conf.DnstapInput == "" {
-		err = errors.New("no input specified")
+		err = joinErr(err, errors.New("no input specified"))
 	}
 	if len(conf.Servers) > 0 && conf.APIKey.String() == "" {
-		err = errors.New("no API key specified")
+		err = joinErr(err, errors.New("no API key specified"))
 	}
 	if conf.MTU < nmsg.MinContainerSize || conf.MTU > nmsg.MaxContainerSize {
-		err = fmt.Errorf("Invalid MTU %d: must be between %d and %d",
-			conf.MTU,
-			nmsg.MinContainerSize,
-			nmsg.MaxContainerSize)
+		err = joinErr(err, fmt.Errorf("Invalid MTU %d: must be between %d and %d",
+			conf.MTU, nmsg.MinContainerSize, nmsg.MaxContainerSize))
 	}
 
 	for _, u := range conf.Servers {
 		switch u.Scheme {
 		case "ws", "wss":
 		default:
-			err = fmt.Errorf("Invalid URI scheme %s in %s",
-				u.Scheme, u)
+			err = joinErr(err, fmt.Errorf("Invalid URI scheme %s in %s",
+				u.Scheme, u))
 			return
 		}
 	}
