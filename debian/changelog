@@ -1,4 +1,4 @@
-dnstap-sensor (0.3.1) debian-fsi; urgency=medium
+dnstap-sensor (0.4.0) debian-fsi; urgency=medium
 
   * Add support for tcp input with -input tcp:<host>:<port>
   * Upgrade go version and dependencies (esp. move to protobuf-go, go-nmsg v0.4.1).
